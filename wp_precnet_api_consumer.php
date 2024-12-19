@@ -8,48 +8,31 @@
  * Author URI:  https://www.rdexclusive.com.br
  */
 
- 
-if (!defined( 'ABSPATH' ))   exit;
-if(!function_exists('add_action')) die;
-add_action('elementor_pro/forms/new_record', function($record, $ajax_handler) {
-  require_once plugin_dir_path(__FILE__) . 'src/apiData.php';
+if (!defined('ABSPATH')) exit;
+if (!function_exists('add_action')) die;
 
-  $form_name = $record->get_form_settings('form_name');
-  if ('formulario_credor_precnet' !== $form_name) {
-      return;
-  }
+add_action('elementor_pro/forms/new_record', function ($record, $ajax_handler) {
+    require_once plugin_dir_path(__FILE__) . 'src/apiData.php';
+    require_once plugin_dir_path(__FILE__) . 'src/formOptionsData.php';
+    $headers = [
+      'Content-Type' => 'application/json',
+      "Authorization" => $token,
+    ];
+    $raw_fields = $record->get('fields');
+    $fields = [];
+    $form_name = $record->get_form_settings('form_name');
+    
+    foreach ($raw_fields as $id => $field) {$fields[$id] = $field['value'];}
+    
+    if ('formulario_credor_precnet' !== $form_name) require_once plugin_dir_path(__FILE__) . 'src/formPayloadsAndApiEndpoint/form_credor_precnet.php';
+    if ('formulario_video_protejase'!== $form_name) require_once plugin_dir_path(__FILE__) . 'src/formPayloadsAndApiEndpoint/form_video_protejase.php';
+    if ('formulario_consulta'       !== $form_name) require_once plugin_dir_path(__FILE__) . 'src/formPayloadsAndApiEndpoint/form_consulta.php';
 
-  $raw_fields = $record->get('fields');
-  $fields = [];
-  foreach ($raw_fields as $id => $field) {
-      $fields[$id] = $field['value'];
-  }
-  $payload = [
-      "nome" => $fields['nome'] ?? '',
-      "telefone" => $fields['telefone'] ?? '',
-      "email" => $fields['email'] ?? '',
-      "opcoes" => [
-          "id_valor_precatorio" => (int) $fields['qual_o_valor_do_precatorio'] ?? 0,
-          "id_em_relacao_ao_precatorio_voce_eh" => (int) $fields['em_relacao_ao_precatorio_voce_e'] ?? 0,
-          "id_tipo_precatorio" => (int) $fields['seu_precatorio_e'] ?? 0,
-          "id_previsao_vencimento" => (int) $fields['ano_recebimento'] ?? 0,
-      ],
-  ];
+    $response = wp_remote_post($apiUrl.$apiEndpoint, [
+        'headers' => $headers,
+        'body' => json_encode($payload),
+    ]);
 
-  $headers = [
-      'Content-Type: application/json',
-      'Authorization: Bearer ' . $token,
-  ];
-
-  $response = wp_remote_post($apiUrl, [
-      'headers' => $headers,
-      'body' => json_encode($payload),
-  ]);
-
-  if( is_wp_error( $response ) ) {
-    $ajax_handler->data['output'] = $response->get_error_message();
-} else {
-    // A resposta está no corpo (body) da resposta
-    $ajax_handler->data['output'] = wp_remote_retrieve_body( $response );
-}
+    if (is_wp_error($response)) $ajax_handler->data['output'] = $response->get_error_message(); 
+    else $ajax_handler->data['output'] = wp_remote_retrieve_body($response);
 }, 10, 2);
