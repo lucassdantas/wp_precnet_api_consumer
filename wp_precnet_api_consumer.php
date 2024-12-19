@@ -24,9 +24,9 @@ add_action('elementor_pro/forms/new_record', function ($record, $ajax_handler) {
     
     foreach ($raw_fields as $id => $field) {$fields[$id] = $field['value'];}
     
-    if ('formulario_credor_precnet' !== $form_name) require_once plugin_dir_path(__FILE__) . 'src/formPayloadsAndApiEndpoint/form_credor_precnet.php';
-    if ('formulario_video_protejase'!== $form_name) require_once plugin_dir_path(__FILE__) . 'src/formPayloadsAndApiEndpoint/form_video_protejase.php';
-    if ('formulario_consulta'       !== $form_name) require_once plugin_dir_path(__FILE__) . 'src/formPayloadsAndApiEndpoint/form_consulta.php';
+    if ('formulario_credor_precnet' == $form_name) require_once plugin_dir_path(__FILE__) . 'src/formPayloadsAndApiEndpoint/form_credor_precnet.php';
+    if ('formulario_video_protejase'== $form_name) require_once plugin_dir_path(__FILE__) . 'src/formPayloadsAndApiEndpoint/form_video_protejase.php';
+    if ('formulario_consulta'       == $form_name) require_once plugin_dir_path(__FILE__) . 'src/formPayloadsAndApiEndpoint/form_consulta.php';
 
     $response = wp_remote_post($apiUrl.$apiEndpoint, [
         'headers' => $headers,

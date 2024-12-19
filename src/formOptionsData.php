@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) exit;
   $map_relacao_precatorio = [
       'Titular/dono' => 922657,
       'Parente do titular/dono' => 922659,
-      'Advogado ' => 922661,
+      'Advogado' => 922661,
       'Funcionário' => 922663,
       'Ex-Esposo(a)' => 922665,
       'Nenhum' => 922667,
