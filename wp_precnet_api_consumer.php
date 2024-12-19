@@ -28,7 +28,7 @@ add_action('elementor_pro/forms/new_record', function ($record, $ajax_handler) {
     if ('formulario_video_protejase'== $form_name) require_once plugin_dir_path(__FILE__) . 'src/formPayloadsAndApiEndpoint/form_video_protejase.php';
     if ('formulario_consulta'       == $form_name) require_once plugin_dir_path(__FILE__) . 'src/formPayloadsAndApiEndpoint/form_consulta.php';
 
-    $response = wp_remote_post($apiUrl.$apiEndpoint, [
+    $response = wp_remote_post($apiBase.$apiEndpoint, [
         'headers' => $headers,
         'body' => json_encode($payload),
     ]);
